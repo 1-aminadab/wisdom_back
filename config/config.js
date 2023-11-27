@@ -1,9 +1,11 @@
+require('dotenv').config()
 module.exports = {
-    PORT: process.env.PORT || 3001,
-    DB_HOST: 'localhost',
-    DB_USER: 'root',
-    DB_PASSWORD: null,
-    DB_DATABASE: 'tutor_schema',
-    secretKey: 'yourSecretKey',
+    PORT:3001,
+    DB_HOST:"localhost",
+    DB_PORT:5432,
+    DB_USER: "postgres",
+    DB_PASSWORD: 'newwayoflife',
+    DB_DATABASE: "Tutor_DB",
+    secretKey: "yoursecretkey",
   };
   

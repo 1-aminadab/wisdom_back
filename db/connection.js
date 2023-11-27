@@ -1,12 +1,13 @@
-const mysql = require('mysql');
-const { DB_HOST, DB_USER, DB_PASSWORD, DB_DATABASE } = require('../config/config');
+const {Client} = require('pg');
+const { DB_HOST, DB_USER, DB_PASSWORD, DB_DATABASE, DB_PORT, } = require('../config/config');
 
-const pool = mysql.createPool({
-  connectionLimit: 10,
-  host: DB_HOST,
-  user: DB_USER,
-  password: DB_PASSWORD,
-  database: DB_DATABASE,
+const client = new Client({
+  post : process.env.DB_PORT,
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_DATABASE,
 });
+client.connect()
 
-module.exports = pool;
+module.exports = client;

@@ -9,14 +9,15 @@ const {checkUserExists} = require('../db/models/User')
 async function register(req, res) {
     try {
         let { firstName, lastName,phoneNumber,gender,address, password,confirmPassword,userType, ...rest } = req.body;
-        console.log(req.body);
+  
         const userData = req.body
         for (const key in userData) {
             if (userData.hasOwnProperty(key) && !userData[key]) {
               return res.status(400).json({title:"Error", message:"please fill all fields"});;
             }
           }
-
+          const phoneNumberRegex = /^(09|07)\d{8}$/
+          if(!phoneNumberRegex.test(phoneNumber)) return res.status(400).json({title:"Invalid Phone number", message:"it start with 09 or 07 and the lenght is 10"}) 
           if(req.body.email){
             const isValid  = validator.validate(req.body.email);
             if (!isValid) return res.status(400).json({title:"Invalid Email address", message:"check you email address"}) 

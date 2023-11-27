@@ -8,7 +8,7 @@ const socketIO = require('socket.io')
 const app = express();
 const server = http.createServer(app)
 const io = socketIO(server)
-
+require('dotenv').config();
 // CORS middleware
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*'); // Allow all origins
