@@ -1,66 +1,52 @@
-const client = require('../connection');
-const { createTeacher } = require('../models/Teacher');
-const { createParent } = require('../models/Parent');
+const User = require('../../models/userModel');
+const {createTeacher }= require('./Teacher');
+const {createParent }= require('./Parent');
 
-
-
-function getUserByPhoneNumber(phoneNumber) {
-    return new Promise((resolve, reject) => {
-        const query = 'SELECT * FROM Users WHERE phoneNumber = $1';
-        client.query(query, [phoneNumber], (error, results) => {
-            if (error) {
-                reject(error);
-            } else {
-                resolve(results.rows[0]);
-            }
-        });
-    });
+async function getUserByPhoneNumber(phoneNumber) {
+    try {
+        const user = await User.findOne({ phoneNumber });
+        return user;
+    } catch (error) {
+        throw error;
+    }
 }
 
-function checkUserExists(phoneNumber) {
-    return new Promise((resolve, reject) => {
-        const query = 'SELECT * FROM Users WHERE phoneNumber = $1';
-        client.query(query, [phoneNumber], (error, results) => {
-            if (error) {
-                reject(error);
-            } else {
-                resolve(results.rows);
-            }
-        });
-    });
+async function checkUserExists(phoneNumber) {
+    try {
+        const users = await User.find({ phoneNumber });
+        return users;
+    } catch (error) {
+        throw error;
+    }
 }
 
-function createUser(userData, otherData, userType) {
-    const columns = Object.keys(userData).join(', ');
-    const placeholders = Object.keys(userData).map((_, i) => `$${i + 1}`).join(', ');
+async function createUser(userData, otherData, userType) {
+    try {
+        const newUser = await User.create(userData);
 
-    return new Promise((resolve, reject) => {
-        const query = `INSERT INTO Users (${columns}) VALUES (${placeholders}) RETURNING userId`; // Adjust the column name here
-        const values = Object.values(userData);
+        if (userType === 'parent') {
+            await createParent({ ...otherData, userId: newUser._id });
+        } else if (userType === 'teacher') {
+            await createTeacher({ ...otherData, userId: newUser._id });
+        }
 
-        client.query(query, values, (error, results) => {
-            if (error) {
-                reject(error);
-            } else {
-                const userID = results.rows[0].userid; // Adjust the column name here
-                console.log(results);
-                
-                if (userType === 'parent') {
-                    createParent({ ...otherData, userId: userID });
-                    resolve(results);
-                }
-                if (userType === 'teacher') {
-                    createTeacher({ ...otherData, userId: userID });
-                    resolve(results);
-                }
-            }
-        });
-    });
+        return newUser;
+    } catch (error) {
+        throw error;
+    }
 }
-
+async function deleteUser(userId){
+    try{
+            await User.deleteOne({_id:userId})
+            console.log('deleted successfuly');
+    }catch(error){
+        console.log('Error deleting message:', error);
+    }
+}
 
 module.exports = {
     getUserByPhoneNumber,
     createUser,
     checkUserExists,
+    deleteUser
 };

@@ -8,6 +8,7 @@ const socketIO = require('socket.io')
 const app = express();
 const server = http.createServer(app)
 const io = socketIO(server)
+const connectDB = require('./db/mongo')
 require('dotenv').config();
 // CORS middleware
 app.use((req, res, next) => {
@@ -34,9 +35,16 @@ app.use('/auth', authRoutes);
 app.get('/protected', authenticateUser, (req, res) => {
   res.json({ message: 'Access granted to protected route', user: req.user });
 });
-
-// Start server
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
-});
+const port  = 3001
+// Start serverconst start = async()=>{
+  const start = async()=>{
+    try {
+        await connectDB(process.env.MONGO_URI)
+        // process.setMaxListeners(0)
+        app.listen(port, ()=> console.log(`server listen at port ${port}... `))
+    } catch (error) {
+        console.log(error);
+    }
+}
+start()
 module.exports.io = io;

@@ -1,25 +1,29 @@
-const client = require('../connection');
+const Teacher = require('../../models/teacherModel');
 
-function createTeacher(teacherData) {
+
+/**
+ * Creates a new teacher record in the database.
+ * @param {Object} teacherData - The data for the teacher.
+ * @returns {Promise} A promise that resolves with the created teacher document.
+ */
+async function createTeacher(teacherData) {
     const age = calculateAge(teacherData.birthDate);
     teacherData = { ...teacherData, age };
 
-    return new Promise((resolve, reject) => {
-        const columns = Object.keys(teacherData).join(', ');
-        const placeholders = Object.keys(teacherData).map((_, i) => `$${i + 1}`).join(', ');
-
-        const query = `INSERT INTO teachers (${columns}) VALUES (${placeholders}) `;
-        const values = Object.values(teacherData);
-
-        client.query(query, values, (error, results) => {
-            if (error) {
-                reject(error);
-            } else {
-                resolve(results);
-            }
-        });
-    });
+    try {
+        const createdTeacher = await Teacher.create(teacherData);
+        return createdTeacher;
+    } catch (error) {
+       await deleteUser(teacherData.userId)
+        throw error;
+    }
 }
+
+/**
+ * Calculates the age based on the provided birth date.
+ * @param {string} birthDate - The birth date of the individual.
+ * @returns {number} The calculated age.
+ */
 function calculateAge(birthDate) {
     const currentDate = new Date();
     const birth = new Date(birthDate);

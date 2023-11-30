@@ -1,23 +1,19 @@
-const client = require('../connection');
+const Parent = require('../../models/parentModel');
 
-function createParent(parentData) {
+/**
+ * Creates a new parent record in the database.
+ * @param {Object} parentData - The data for the parent.
+ * @returns {Promise} A promise that resolves with the created parent document.
+ */
+async function createParent(parentData) {
     console.log(parentData);
 
-    return new Promise((resolve, reject) => {
-        const columns = Object.keys(parentData).join(', ');
-        const placeholders = Object.keys(parentData).map((_, i) => `$${i + 1}`).join(', ');
-
-        const query = `INSERT INTO parents (${columns}) VALUES (${placeholders}) `;
-        const values = Object.values(parentData);
-
-        client.query(query, values, (error, results) => {
-            if (error) {
-                reject(error);
-            } else {
-                resolve(results);
-            }
-        });
-    });
+    try {
+        const createdParent = await Parent.create(parentData);
+        return createdParent;
+    } catch (error) {
+        throw error;
+    }
 }
 
 module.exports = {
