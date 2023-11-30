@@ -8,6 +8,7 @@ const {checkUserExists} = require('../db/models/User')
 
 async function register(req, res) {
     try {
+        console.log("offcourse we're in")
         let { firstName, lastName,phoneNumber,gender,address, password,confirmPassword,userType, ...rest } = req.body;
   
         const userData = req.body
