@@ -37,7 +37,7 @@ async function register(req, res) {
         await createUser({firstName, lastName,phoneNumber,gender,address,userType, password},rest,userType);
        
         // Depending on user_type, create associated record in Teachers, Students, or Parents table
-       
+        console.log("register successfully")
         res.status(200).json({ title:"Registered successfully", message: "We'll Contact you soon" });
     } catch (error) {
         console.error('Registration error:', error);
